@@ -21,7 +21,8 @@ public:
 	static const float lengthFromHandToTip;
 
 	static shared_ptr<RigJoint>	CreateBoneHierarchy();
-	static void TraverseBoneHierarchy(shared_ptr<RigJoint>& node, function<void(shared_ptr<RigJoint>&)> f,
-		std::function<bool(shared_ptr<RigJoint>&)> pred = [](shared_ptr<RigJoint>& t){ return false; });
+	static void TraverseBoneHierarchy(shared_ptr<RigJoint>& node, 
+				function<void(shared_ptr<RigJoint>&)> f,
+		function<bool(shared_ptr<RigJoint>&)> pred = [](shared_ptr<RigJoint>& t){ return false; });
 };
 

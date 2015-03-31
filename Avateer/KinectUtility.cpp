@@ -34,21 +34,22 @@ shared_ptr<RigJoint> KinectUtility::CreateBoneHierarchy()
 	spineShoulder->AddChild(make_shared<RigJoint>(JointType::Neck, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromShoulderToNeck, L"Neck"))
 		->AddChild(make_shared<RigJoint>(JointType::Head, XMFLOAT3(1.0f, 1.0f, 1.0f), lengthFromNeckToHead, L"Head"));
 
-	auto handRight = spineShoulder->AddChild(make_shared<RigJoint>(JointType::ShoulderRight, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineShoulderToShoulder, L"Shoulder Right"))
+	auto wristRight = spineShoulder->AddChild(make_shared<RigJoint>(JointType::ShoulderRight, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineShoulderToShoulder, L"Shoulder Right"))
 		->AddChild(make_shared<RigJoint>(JointType::ElbowRight, XMFLOAT3(0.0f, 0.0f, 1.0f), lengthFromShoulderToElbow, L"Elbow Right"))
-		->AddChild(make_shared<RigJoint>(JointType::WristRight, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromElbowToWrist, L"Wrist Right"))
-		->AddChild(make_shared<RigJoint>(JointType::HandRight, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromWristToHand, L"Hand Right"));
+		->AddChild(make_shared<RigJoint>(JointType::WristRight, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromElbowToWrist, L"Wrist Right"));
 
-	handRight->AddChild(make_shared<RigJoint>(JointType::ThumbRight, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToThumb, L"Thumb Right"))
-		->AddChild(make_shared<RigJoint>(JointType::HandTipRight, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToTip, L"Hand Tip Right"));
+	auto handRight = wristRight->AddChild(make_shared<RigJoint>(JointType::HandRight, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromWristToHand, L"Hand Right"));
 
-	auto handLeft = spineShoulder->AddChild(make_shared<RigJoint>(JointType::ShoulderLeft, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineShoulderToShoulder, L"Shoulder Left"))
+	wristRight->AddChild(make_shared<RigJoint>(JointType::ThumbRight, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToThumb, L"Thumb Right"));
+	handRight->AddChild(make_shared<RigJoint>(JointType::HandTipRight, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToTip, L"Hand Tip Right"));
+
+	auto wristLeft = spineShoulder->AddChild(make_shared<RigJoint>(JointType::ShoulderLeft, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineShoulderToShoulder, L"Shoulder Left"))
 		->AddChild(make_shared<RigJoint>(JointType::ElbowLeft, XMFLOAT3(0.0f, 0.0f, 1.0f), lengthFromShoulderToElbow, L"Elbow Left"))
-		->AddChild(make_shared<RigJoint>(JointType::WristLeft, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromElbowToWrist, L"Wrist Left"))
-		->AddChild(make_shared<RigJoint>(JointType::HandLeft, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromWristToHand, L"Hand Left"));
+		->AddChild(make_shared<RigJoint>(JointType::WristLeft, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromElbowToWrist, L"Wrist Left"));
 
-	handLeft->AddChild(make_shared<RigJoint>(JointType::ThumbLeft, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToThumb, L"Thumb Left"))
-		->AddChild(make_shared<RigJoint>(JointType::HandTipLeft, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToTip, L"Hand Tip Left"));
+	auto handLeft = wristLeft->AddChild(make_shared<RigJoint>(JointType::HandLeft, XMFLOAT3(1.0f, 1.0f, 0.0f), lengthFromWristToHand, L"Hand Left"));
+	wristLeft->AddChild(make_shared<RigJoint>(JointType::ThumbLeft, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToThumb, L"Thumb Left"));
+	handLeft->AddChild(make_shared<RigJoint>(JointType::HandTipLeft, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromHandToTip, L"Hand Tip Left"));
 
 	return boneHierarchy;
 }

@@ -20,6 +20,9 @@ public:
 	float BoneLength() { return _boneLength; }
 	const JointType& JointType() { return _jointType; }
 
+	XMVECTOR _transformed;
+	JointOrientation _orientation;
+
 private:
 	shared_ptr<RigJoint> _parent;
 	vector<shared_ptr<RigJoint>> _children;

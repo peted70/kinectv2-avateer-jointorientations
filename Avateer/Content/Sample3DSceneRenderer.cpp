@@ -192,35 +192,60 @@ void Sample3DSceneRenderer::Render()
 		XMVECTOR res = { 0.0f, 0.0f, 0.0f, 0.0f };
 		bool terminated = false;
 
-		KinectUtility::TraverseBoneHierarchy(_boneHierarchy,
+		KinectUtility::TraverseBoneHierarchy(_boneHierarchy, 
 			[&body, &res, this, &transformed, boneLength, &context](shared_ptr<RigJoint>& t)
 			{
 				Utility::Out(L"Joint Type is %s\n", t->JointType().ToString()->Data());
-				if (t->JointType() == JointType::FootRight || t->JointType() == JointType::FootLeft || 
-					t->JointType() == JointType::Head || t->JointType() == JointType::HandTipRight)
-					transformed = res;
+				//if (t->JointType() == JointType::FootRight || t->JointType() == JointType::FootLeft || 
+				//	t->JointType() == JointType::Head || t->JointType() == JointType::HandTipRight)
+				//	transformed = res;
+				if (t->JointType() == JointType::HandTipLeft)
+				{
+					int X = 3;
+				}
 
-				auto or = body->JointOrientations->Lookup(t->JointType());
+				t->_orientation = body->JointOrientations->Lookup(t->JointType());
+
+				// if orientation is zero use parent orientation...
+				auto parent = t->Parent();
+				JointOrientation or = t->_orientation;
+
+				auto v4 = XMFLOAT4(t->_orientation.Orientation.X, 
+					t->_orientation.Orientation.Y, 
+					t->_orientation.Orientation.Z, 
+					t->_orientation.Orientation.W);
+
+				if (XMVector4Equal(XMLoadFloat4(&v4), XMVectorZero()) && parent != nullptr)
+				{
+					or = parent->_orientation;
+				}
+				
 				auto f4 = XMFLOAT4(or.Orientation.X, or.Orientation.Y, or.Orientation.Z, or.Orientation.W);
 				auto rotMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&f4));
+				if (parent != nullptr)
+				{
+					transformed = parent->_transformed;
+				}
 
 				auto translatedOrigin = XMMatrixTranslationFromVector(transformed);
 				XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(translatedOrigin));
 
 				// draw something here to confirm...
-				DrawAxis(context, _axis.get());
+				//DrawAxis(context, _axis.get());
 
 				auto translated = XMMatrixTranslation(0.0f, boneLength, 0.0f);
 
 				auto mat = rotMatrix * translatedOrigin;
-				
 				XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(mat));
 				
 				auto f3 = XMFLOAT3(0.0f, boneLength, 0.0f);
-				transformed = XMVector3TransformCoord(XMLoadFloat3(&f3), mat);
+				t->_transformed = XMVector3TransformCoord(XMLoadFloat3(&f3), mat);
 
-				// draw...
-				DrawBone(context);
+				if (parent != nullptr)
+				{
+					// draw...
+					DrawBone(context);
+				}
 			},
 			[&terminated](shared_ptr<RigJoint>& t) 
 				{ 
