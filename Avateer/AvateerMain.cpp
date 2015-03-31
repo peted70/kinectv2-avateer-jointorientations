@@ -90,7 +90,7 @@ void AvateerMain::Update()
 void AvateerMain::ProcessInput()
 {
 	// TODO: Add per frame input handling here.
-	m_sceneRenderer->TrackingUpdate(m_pointerLocationX, m_pointerLocationY);
+	m_sceneRenderer->TrackingUpdate(m_pointerLocationX, m_pointerLocationY, _keyModifiers);
 }
 
 // Renders the current frame according to the current application state.

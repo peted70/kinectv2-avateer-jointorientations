@@ -12,6 +12,7 @@ using namespace WindowsPreview::Kinect;
 using namespace Platform::Collections;
 using namespace DirectX;
 using namespace std;
+using namespace Windows::System;
 
 namespace Avateer
 {
@@ -25,8 +26,8 @@ namespace Avateer
 		void ReleaseDeviceDependentResources();
 		void Update(DX::StepTimer const& timer);
 		void Render();
-		void StartTracking();
-		void TrackingUpdate(float positionX, float positionY);
+		void StartTracking(float positionX, float positionY, VirtualKeyModifiers mod);
+		void TrackingUpdate(float positionX, float positionY, VirtualKeyModifiers mod);
 		void StopTracking();
 		bool IsTracking() { return m_tracking; }
 
@@ -61,6 +62,7 @@ namespace Avateer
 		float _yaw;
 		float _pitch;
 		float _roll;
+		float _zoom;
 
 		KinectSensor^ _sensor;
 		BodyFrameReader^ _reader;

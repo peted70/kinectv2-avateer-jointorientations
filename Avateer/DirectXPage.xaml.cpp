@@ -165,7 +165,8 @@ void DirectXPage::AppBarButton_Click(Object^ sender, RoutedEventArgs^ e)
 void DirectXPage::OnPointerPressed(Object^ sender, PointerEventArgs^ e)
 {
 	// When the pointer is pressed begin tracking the pointer movement.
-	m_main->StartTracking();
+	m_main->StartTracking(e->CurrentPoint->Position.X, e->CurrentPoint->Position.Y,
+		e->KeyModifiers);
 }
 
 void DirectXPage::OnPointerMoved(Object^ sender, PointerEventArgs^ e)
@@ -173,7 +174,8 @@ void DirectXPage::OnPointerMoved(Object^ sender, PointerEventArgs^ e)
 	// Update the pointer tracking code.
 	if (m_main->IsTracking())
 	{
-		m_main->TrackingUpdate(e->CurrentPoint->Position.X, e->CurrentPoint->Position.Y);
+		m_main->TrackingUpdate(e->CurrentPoint->Position.X, e->CurrentPoint->Position.Y,
+		e->KeyModifiers);
 	}
 }
 

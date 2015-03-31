@@ -5,8 +5,11 @@
 #include "Utility.h"
 
 using namespace Avateer;
-
 using namespace Windows::Foundation;
+
+static float lastPosX;
+static float lastPosY;
+static float lastY;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
@@ -14,7 +17,8 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 	m_degreesPerSecond(45),
 	m_indexCount(0),
 	m_tracking(false),
-	m_deviceResources(deviceResources)
+	m_deviceResources(deviceResources),
+	_zoom(30.0f)
 {
 	_grid = make_unique<DXGrid>();
 	_mainAxes = make_unique<Axis>(2000000.0);
@@ -72,8 +76,8 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
 	auto camMatrix = XMMatrixRotationRollPitchYaw(_pitch, _yaw, _roll);
-
-	static const XMVECTORF32 alongZ = { 0.0f, 5.0f, 30.0f };
+	
+	XMVECTORF32 alongZ = { 0.0f, 0.0f, _zoom };
 
 	auto eye = XMVector3TransformCoord(alongZ, camMatrix);
 	XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
@@ -82,17 +86,6 @@ void Sample3DSceneRenderer::CreateWindowSizeDependentResources()
 // Called once per frame, rotates the cube and calculates the model and view matrices.
 void Sample3DSceneRenderer::Update(DX::StepTimer const& timer)
 {
-	//CreateDeviceDependentResources();
-
-	if (!m_tracking)
-	{
-		// Convert degrees to radians, then convert seconds to rotation angle
-		float radiansPerSecond = XMConvertToRadians(m_degreesPerSecond);
-		double totalRotation = timer.GetTotalSeconds() * radiansPerSecond;
-		float radians = static_cast<float>(fmod(totalRotation, XM_2PI));
-
-		//Rotate(0.0f);
-	}
 }
 
 // Rotate the 3D cube model a set amount of radians.
@@ -102,29 +95,37 @@ void Sample3DSceneRenderer::Rotate(float radians)
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixRotationY(radians)));
 }
 
-void Sample3DSceneRenderer::StartTracking()
+void Sample3DSceneRenderer::StartTracking(float positionX, float positionY, VirtualKeyModifiers mod)
 {
 	m_tracking = true;
+	lastPosY = positionY;
+	lastPosX = positionX;
 }
 
-static float lastPosX;
-static float lastPosY;
-
 // When tracking, the 3D cube can be rotated around its Y axis by tracking pointer position relative to the output screen width.
-void Sample3DSceneRenderer::TrackingUpdate(float positionX, float positionY)
+void Sample3DSceneRenderer::TrackingUpdate(float positionX, float positionY, VirtualKeyModifiers mod)
 {
 	if (m_tracking)
 	{
-		_yaw = (positionX - lastPosX) / 100;
-		_pitch = (positionY - lastPosY) / 100;
+		if ((int)(mod & VirtualKeyModifiers::Control) != 0)
+		{
+			_zoom += (positionY - lastPosY) / 10;
+		}
+		else
+		{
+			_pitch += (positionY - lastPosY) / 100;
+			_yaw += (positionX - lastPosX) / 100;
+		}
+
+		lastPosY = positionY;
+		lastPosX = positionX;
+
 		CreateWindowSizeDependentResources();
 	}
 }
 
 void Sample3DSceneRenderer::StopTracking()
 {
-	lastPosX = 0;
-	lastPosY = 0;
 	m_tracking = false;
 }
 
@@ -160,14 +161,6 @@ void Sample3DSceneRenderer::Render()
 	DrawGrid(context);
 	DrawAxis(context, _mainAxes.get());
 
-	//auto quat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(0.0f), XMConvertToRadians(0.0f), XMConvertToRadians(x += 2.0f));
-	//auto rotMatrix = XMMatrixRotationQuaternion(quat);
-	//auto tmat = XMMatrixTranslation(0.0f, -2.0f, 0.0f);
-	//auto wmat = XMMatrixTranslation(0.0f, 2.0f, 0.0f);
-	//XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(tmat * rotMatrix * wmat));
-	//DrawBone(context);
-	//return;
-
 	bool updated = false;
 
 	{
@@ -196,13 +189,6 @@ void Sample3DSceneRenderer::Render()
 			[&body, &res, this, &transformed, boneLength, &context](shared_ptr<RigJoint>& t)
 			{
 				Utility::Out(L"Joint Type is %s\n", t->JointType().ToString()->Data());
-				//if (t->JointType() == JointType::FootRight || t->JointType() == JointType::FootLeft || 
-				//	t->JointType() == JointType::Head || t->JointType() == JointType::HandTipRight)
-				//	transformed = res;
-				if (t->JointType() == JointType::HandTipLeft)
-				{
-					int X = 3;
-				}
 
 				t->_orientation = body->JointOrientations->Lookup(t->JointType());
 

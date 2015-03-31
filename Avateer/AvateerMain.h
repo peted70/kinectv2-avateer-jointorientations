@@ -14,8 +14,15 @@ namespace Avateer
 		AvateerMain(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 		~AvateerMain();
 		void CreateWindowSizeDependentResources();
-		void StartTracking() { m_sceneRenderer->StartTracking(); }
-		void TrackingUpdate(float positionX, float positionY) { m_pointerLocationX = positionX; m_pointerLocationY = positionY; }
+		void StartTracking(float positionX, float positionY, Windows::System::VirtualKeyModifiers mod) 
+		{ 
+			m_sceneRenderer->StartTracking(positionX, positionY, mod);
+		}
+		void TrackingUpdate(float positionX, float positionY, Windows::System::VirtualKeyModifiers mod) 
+		{ 
+			m_pointerLocationX = positionX; m_pointerLocationY = positionY; 
+			_keyModifiers = mod;
+		}
 		void StopTracking() { m_sceneRenderer->StopTracking(); }
 		bool IsTracking() { return m_sceneRenderer->IsTracking(); }
 		void StartRenderLoop();
@@ -47,5 +54,6 @@ namespace Avateer
 		// Track current input pointer position.
 		float m_pointerLocationX;
 		float m_pointerLocationY;
+		Windows::System::VirtualKeyModifiers _keyModifiers;
 	};
 }
