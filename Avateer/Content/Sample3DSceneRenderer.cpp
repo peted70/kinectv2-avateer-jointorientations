@@ -217,11 +217,11 @@ void Sample3DSceneRenderer::Render()
 				XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(translatedOrigin));
 
 				// draw something here to confirm...
-				//DrawAxis(context, _axis.get());
+				DrawAxis(context, _axis.get());
 
 				auto translated = XMMatrixTranslation(0.0f, boneLength, 0.0f);
-
-				auto mat = rotMatrix * translatedOrigin;
+				auto scaleMat = XMMatrixScaling(1.0f, t->BoneLength(), 1.0f);
+				auto mat = scaleMat * rotMatrix * translatedOrigin;
 				XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(mat));
 				
 				auto f3 = XMFLOAT3(0.0f, boneLength, 0.0f);
@@ -270,8 +270,6 @@ void Sample3DSceneRenderer::DrawGrid(ID3D11DeviceContext2 *context)
 
 void Sample3DSceneRenderer::DrawAxis(ID3D11DeviceContext2 *context, Axis *axis)
 {
-	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixIdentity()));
-
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0);
 

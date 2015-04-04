@@ -1,5 +1,5 @@
 #pragma once
-#define FACTOR 1
+#define FACTOR 6
 #include"RigJoint.h"
 
 using namespace std;
@@ -7,6 +7,8 @@ using namespace std;
 class KinectUtility
 {
 public:
+	static const float lengthFromSpineBaseToSpineMid;
+	static const float lengthFromSpineMidToSpineShoulder;
 	static const float lengthFromSpineMidToHipRight;
 	static const float lengthFromHipRightToKneeRight;
 	static const float lengthFromKneeRightToAnkleRight;

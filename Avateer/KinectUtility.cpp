@@ -1,22 +1,24 @@
 #include "pch.h"
 #include "KinectUtility.h"
 
-const float KinectUtility::lengthFromSpineMidToHipRight = FACTOR*0.122f;
-const float KinectUtility::lengthFromHipRightToKneeRight = FACTOR*0.3957f;
-const float KinectUtility::lengthFromKneeRightToAnkleRight = FACTOR*0.3f;
+const float KinectUtility::lengthFromSpineBaseToSpineMid = FACTOR*0.2f;
+const float KinectUtility::lengthFromSpineMidToSpineShoulder = FACTOR*0.2f;
+const float KinectUtility::lengthFromSpineMidToHipRight = FACTOR*0.1f;
+const float KinectUtility::lengthFromHipRightToKneeRight = FACTOR*0.3f;
+const float KinectUtility::lengthFromKneeRightToAnkleRight = FACTOR*0.2f;
 const float KinectUtility::lengthFromAnkleToFoot = FACTOR*0.1f;
-const float KinectUtility::lengthFromShoulderToNeck = FACTOR*0.2f;
-const float KinectUtility::lengthFromNeckToHead = FACTOR*0.3f;
-const float KinectUtility::lengthFromSpineShoulderToShoulder = FACTOR*0.3f;
-const float KinectUtility::lengthFromShoulderToElbow = FACTOR*0.4f;
-const float KinectUtility::lengthFromElbowToWrist = FACTOR*0.3f;
-const float KinectUtility::lengthFromWristToHand = FACTOR*0.1f;
-const float KinectUtility::lengthFromHandToThumb = FACTOR*0.2f;
-const float KinectUtility::lengthFromHandToTip = FACTOR*0.2f;
+const float KinectUtility::lengthFromShoulderToNeck = FACTOR*0.05f;
+const float KinectUtility::lengthFromNeckToHead = FACTOR*0.1f;
+const float KinectUtility::lengthFromSpineShoulderToShoulder = FACTOR*0.2f;
+const float KinectUtility::lengthFromShoulderToElbow = FACTOR*0.3f;
+const float KinectUtility::lengthFromElbowToWrist = FACTOR*0.2f;
+const float KinectUtility::lengthFromWristToHand = FACTOR*0.05f;
+const float KinectUtility::lengthFromHandToThumb = FACTOR*0.05f;
+const float KinectUtility::lengthFromHandToTip = FACTOR*0.05f;
 
 shared_ptr<RigJoint> KinectUtility::CreateBoneHierarchy()
 {
-	auto boneHierarchy = make_shared<RigJoint>(JointType::SpineBase, XMFLOAT3(1.0f, 0.0f, 0.0f), 0.0f, L"Spine Base");
+	auto boneHierarchy = make_shared<RigJoint>(JointType::SpineBase, XMFLOAT3(1.0f, 0.0f, 0.0f), 1.0f, L"Spine Base");
 
 	boneHierarchy->AddChild(make_shared<RigJoint>(JointType::HipRight, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineMidToHipRight, L"Hip Right"))
 		->AddChild(make_shared<RigJoint>(JointType::KneeRight, XMFLOAT3(0.0f, 0.0f, 1.0f), lengthFromHipRightToKneeRight, L"Knee Right"))
@@ -28,8 +30,8 @@ shared_ptr<RigJoint> KinectUtility::CreateBoneHierarchy()
 		->AddChild(make_shared<RigJoint>(JointType::AnkleLeft, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromKneeRightToAnkleRight, L"Ankle Left"))
 		->AddChild(make_shared<RigJoint>(JointType::FootLeft, XMFLOAT3(0.0f, 1.0f, 1.0f), lengthFromAnkleToFoot, L"Foot Left"));
 
-	auto spineShoulder = boneHierarchy->AddChild(make_shared<RigJoint>(JointType::SpineMid, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineMidToHipRight, L"Spine Mid"))
-		->AddChild(make_shared<RigJoint>(JointType::SpineShoulder, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineMidToHipRight, L"Spine Shoulder"));
+	auto spineShoulder = boneHierarchy->AddChild(make_shared<RigJoint>(JointType::SpineMid, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineBaseToSpineMid, L"Spine Mid"))
+		->AddChild(make_shared<RigJoint>(JointType::SpineShoulder, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromSpineMidToSpineShoulder, L"Spine Shoulder"));
 
 	spineShoulder->AddChild(make_shared<RigJoint>(JointType::Neck, XMFLOAT3(0.0f, 1.0f, 0.0f), lengthFromShoulderToNeck, L"Neck"))
 		->AddChild(make_shared<RigJoint>(JointType::Head, XMFLOAT3(1.0f, 1.0f, 1.0f), lengthFromNeckToHead, L"Head"));
