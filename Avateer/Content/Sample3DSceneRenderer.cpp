@@ -300,6 +300,10 @@ void Sample3DSceneRenderer::DrawAxis(ID3D11DeviceContext2 *context, Axis *axis)
 
 void Sample3DSceneRenderer::DrawBone(ID3D11DeviceContext2 *context, XMFLOAT3 color)
 {
+	m_constantBufferData.color.x = color.x;
+	m_constantBufferData.color.y = color.y;
+	m_constantBufferData.color.z = color.z;
+
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0);
 

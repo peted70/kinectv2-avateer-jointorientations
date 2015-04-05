@@ -13,6 +13,9 @@ DXGrid::DXGrid()
 void DXGrid::Initialise(ID3D11Device *device)
 {
 	int gridWidth = 20;
+	float cellWidth = 5.0f;
+	float cellHeight = 5.0f;
+
 	VertexPositionColor *vertices;
 	unsigned long* indices;
 	int index, i, j;
@@ -42,7 +45,7 @@ void DXGrid::Initialise(ID3D11Device *device)
 	{
 		for (int j = -num; j <= num; j++)
 		{
-			vertices[index].pos = XMFLOAT3(i, 0.0f, j);
+			vertices[index].pos = XMFLOAT3(cellWidth * i, 0.0f, cellHeight * j);
 			vertices[index].color = XMFLOAT3(0.4f, 0.4f, 0.4f);
 			index++;
 		}
