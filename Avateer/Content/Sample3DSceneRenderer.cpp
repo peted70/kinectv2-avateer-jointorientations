@@ -230,7 +230,7 @@ void Sample3DSceneRenderer::Render()
 				if (parent != nullptr)
 				{
 					// draw...
-					DrawBone(context);
+					DrawBone(context, t->getColour());
 				}
 			},
 			[&terminated](shared_ptr<RigJoint>& t) 
@@ -247,6 +247,10 @@ void Sample3DSceneRenderer::Render()
 void Sample3DSceneRenderer::DrawGrid(ID3D11DeviceContext2 *context)
 {
 	XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(XMMatrixIdentity()));
+
+    m_constantBufferData.color.x = 0.3f;
+    m_constantBufferData.color.y = 0.3f;
+    m_constantBufferData.color.z = 0.3f;
 
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0);
@@ -270,7 +274,11 @@ void Sample3DSceneRenderer::DrawGrid(ID3D11DeviceContext2 *context)
 
 void Sample3DSceneRenderer::DrawAxis(ID3D11DeviceContext2 *context, Axis *axis)
 {
-	// Prepare the constant buffer to send it to the graphics device.
+    m_constantBufferData.color.x = 1.0f;
+    m_constantBufferData.color.y = 1.0f;
+    m_constantBufferData.color.z = 1.0f;
+    
+    // Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0);
 
 	axis->RenderBuffers(context);
@@ -290,7 +298,7 @@ void Sample3DSceneRenderer::DrawAxis(ID3D11DeviceContext2 *context, Axis *axis)
 	context->DrawIndexed(axis->IndexCount(), 0, 0);
 }
 
-void Sample3DSceneRenderer::DrawBone(ID3D11DeviceContext2 *context)
+void Sample3DSceneRenderer::DrawBone(ID3D11DeviceContext2 *context, XMFLOAT3 color)
 {
 	// Prepare the constant buffer to send it to the graphics device.
 	context->UpdateSubresource(m_constantBuffer.Get(), 0, NULL, &m_constantBufferData, 0, 0);

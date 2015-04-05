@@ -4,6 +4,7 @@ cbuffer ModelViewProjectionConstantBuffer : register(b0)
 	matrix model;
 	matrix view;
 	matrix projection;
+    float3 color;
 };
 
 // Per-vertex data used as input to the vertex shader.
@@ -33,7 +34,7 @@ PixelShaderInput main(VertexShaderInput input)
 	output.pos = pos;
 
 	// Pass the color through without modification.
-	output.color = input.color;
+    output.color = color;
 
 	return output;
 }

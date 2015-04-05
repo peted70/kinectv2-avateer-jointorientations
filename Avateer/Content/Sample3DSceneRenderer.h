@@ -34,7 +34,7 @@ namespace Avateer
 
 	private:
 		void Rotate(float radians);
-		void DrawBone(ID3D11DeviceContext2 *context);
+		void DrawBone(ID3D11DeviceContext2 *context, XMFLOAT3 color);
 		void DrawGrid(ID3D11DeviceContext2 *context);
 		void DrawAxis(ID3D11DeviceContext2 *context, Axis *axis);
 
