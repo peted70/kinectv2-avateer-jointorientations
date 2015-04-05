@@ -174,6 +174,16 @@ void Sample3DSceneRenderer::Render()
 
 	context->RSSetState(m_pRasterState);
 
+    //DrawBone(context, ORANGE_COL);
+
+    //auto mat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90.0f), 0.0F, 0.0F);
+    //auto rotMatrix = XMMatrixRotationQuaternion(mat);
+    //XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(rotMatrix));
+
+    //DrawBone(context, DARKBLUE_COL);
+
+    //return;
+
 	// use bodies array if it is new...
 	for (auto body : _bodies)
 	{
@@ -190,23 +200,28 @@ void Sample3DSceneRenderer::Render()
 			{
 				Utility::Out(L"Joint Type is %s\n", t->JointType().ToString()->Data());
 
+                // Lookup the joint orientation for this joint
 				t->_orientation = body->JointOrientations->Lookup(t->JointType());
 
-				// if orientation is zero use parent orientation...
-				auto parent = t->Parent();
-				JointOrientation or = t->_orientation;
+				// if orientation is zero use parent orientation. (Some of the leaf joint orientations
+                // are zero)
+				JointOrientation orientation = t->_orientation;
 
 				auto v4 = XMFLOAT4(t->_orientation.Orientation.X, 
 					t->_orientation.Orientation.Y, 
 					t->_orientation.Orientation.Z, 
 					t->_orientation.Orientation.W);
 
-				if (XMVector4Equal(XMLoadFloat4(&v4), XMVectorZero()) && parent != nullptr)
+                auto parent = t->Parent();
+                if (XMVector4Equal(XMLoadFloat4(&v4), XMVectorZero()) && parent != nullptr)
 				{
-					or = parent->_orientation;
+                    orientation = parent->_orientation;
 				}
 				
-				auto f4 = XMFLOAT4(or.Orientation.X, or.Orientation.Y, or.Orientation.Z, or.Orientation.W);
+                // Create a rotation matrix from the orientation quaternion. If we are at the root start with a transform
+                // to take us to the absolute position of the whole body. If we are not at the root start with the 
+                // parent's transform.
+				auto f4 = XMFLOAT4(orientation.Orientation.X, orientation.Orientation.Y, orientation.Orientation.Z, orientation.Orientation.W);
 				auto rotMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&f4));
 				if (parent != nullptr)
 				{
@@ -214,16 +229,19 @@ void Sample3DSceneRenderer::Render()
 				}
 				else
 				{
-					// We are at the root so transform to the correct position
+					// We are at the root so transform to the absolute position (this transform will affect all bones in
+                    // the hierarchy)
 					auto pos = body->Joints->Lookup(t->JointType()).Position;
 					auto v3 = XMFLOAT3(FACTOR * pos.X, FACTOR * pos.Y, FACTOR * pos.Z);
 					transformed = XMLoadFloat3(&v3);
 				}
 
+                // Convert the vector into a transform matrix and store into the model matrix
 				auto translatedOrigin = XMMatrixTranslationFromVector(transformed);
 				XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(translatedOrigin));
 
-				// draw something here to confirm...
+				// draw a marker here so we can see that we are in the right place (this should be at the end of the 
+                // parent bone)
 				DrawAxis(context, _axis.get());
 
 				auto translated = XMMatrixTranslation(0.0f, boneLength, 0.0f);

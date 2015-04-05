@@ -16,12 +16,6 @@ const float KinectUtility::lengthFromWristToHand = FACTOR*0.05f;
 const float KinectUtility::lengthFromHandToThumb = FACTOR*0.05f;
 const float KinectUtility::lengthFromHandToTip = FACTOR*0.05f;
 
-#define ORANGE_COL XMFLOAT3(0.929f, 0.49f, 0.192f)
-#define GREEN_COL XMFLOAT3(0.439f, 0.678f, 0.278f)
-#define DARKBLUE_COL XMFLOAT3(0.267f, 0.329f, 0.416f)
-#define LIGHTBLUE_COL XMFLOAT3(0.357f, 0.608f, 0.835f)
-#define YELLOW_COL XMFLOAT3(1.0f, 0.753f, 0.0f)
-
 shared_ptr<RigJoint> KinectUtility::CreateBoneHierarchy()
 {
 	auto boneHierarchy = make_shared<RigJoint>(JointType::SpineBase, LIGHTBLUE_COL, 1.0f, L"Spine Base");
