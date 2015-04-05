@@ -332,7 +332,7 @@ void Sample3DSceneRenderer::DrawBone(ID3D11DeviceContext2 *context, XMFLOAT3 col
 void Sample3DSceneRenderer::CreateDeviceDependentResources()
 {
 	D3D11_RASTERIZER_DESC rasterizerState;
-	rasterizerState.FillMode = D3D11_FILL_SOLID;
+	rasterizerState.FillMode = D3D11_FILL_WIREFRAME;
 	rasterizerState.CullMode = D3D11_CULL_NONE;
 	rasterizerState.FrontCounterClockwise = true;
 	rasterizerState.DepthBias = false;
