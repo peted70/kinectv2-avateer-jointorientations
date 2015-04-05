@@ -73,7 +73,7 @@ void Axis::Initialise(ID3D11Device *device)
 	}
 
 	D3D11_RASTERIZER_DESC rasterizerState;
-	rasterizerState.FillMode = D3D11_FILL_SOLID;
+	rasterizerState.FillMode = D3D11_FILL_WIREFRAME;
 	rasterizerState.CullMode = D3D11_CULL_NONE;
 	rasterizerState.FrontCounterClockwise = true;
 	rasterizerState.DepthBias = false;

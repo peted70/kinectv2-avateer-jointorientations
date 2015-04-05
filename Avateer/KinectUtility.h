@@ -1,5 +1,5 @@
 #pragma once
-#define FACTOR 6
+#define FACTOR 5
 #include"RigJoint.h"
 
 using namespace std;
@@ -24,7 +24,6 @@ public:
 
 	static shared_ptr<RigJoint>	CreateBoneHierarchy();
 	static void TraverseBoneHierarchy(shared_ptr<RigJoint>& node, 
-				function<void(shared_ptr<RigJoint>&)> f,
-		function<bool(shared_ptr<RigJoint>&)> pred = [](shared_ptr<RigJoint>& t){ return false; });
+				function<void(shared_ptr<RigJoint>&)> f);
 };
 

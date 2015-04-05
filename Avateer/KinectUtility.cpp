@@ -62,20 +62,16 @@ shared_ptr<RigJoint> KinectUtility::CreateBoneHierarchy()
 	return boneHierarchy;
 }
 
-void KinectUtility::TraverseBoneHierarchy(shared_ptr<RigJoint>& node, std::function<void(shared_ptr<RigJoint>&)> f,
-					std::function<bool(shared_ptr<RigJoint>&)> pred)
+void KinectUtility::TraverseBoneHierarchy(shared_ptr<RigJoint>& node, std::function<void(shared_ptr<RigJoint>&)> f)
 {
 	if (!node)
-		return;
-
-	if (pred(node))
 		return;
 
 	f(node);
 
 	for (auto child : node->Children())
 	{
-		TraverseBoneHierarchy(child, f, pred);
+		TraverseBoneHierarchy(child, f);
 	}
 }
 

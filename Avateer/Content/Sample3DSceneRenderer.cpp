@@ -212,6 +212,13 @@ void Sample3DSceneRenderer::Render()
 				{
 					transformed = parent->_transformed;
 				}
+				else
+				{
+					// We are at the root so transform to the correct position
+					auto pos = body->Joints->Lookup(t->JointType()).Position;
+					auto v3 = XMFLOAT3(FACTOR * pos.X, FACTOR * pos.Y, FACTOR * pos.Z);
+					transformed = XMLoadFloat3(&v3);
+				}
 
 				auto translatedOrigin = XMMatrixTranslationFromVector(transformed);
 				XMStoreFloat4x4(&m_constantBufferData.model, XMMatrixTranspose(translatedOrigin));
@@ -232,14 +239,6 @@ void Sample3DSceneRenderer::Render()
 					// draw...
 					DrawBone(context, t->getColour());
 				}
-			},
-			[&terminated](shared_ptr<RigJoint>& t) 
-				{ 
-					if (t->JointType() == JointType::FootRight)
-					{
-						//terminated = true;
-					}
-					return terminated;
 			});
 	}
 }
